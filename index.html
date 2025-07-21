@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>МестныеДела — Объявления</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header>
+    <h1>МестныеДела</h1>
+    <button class="submit-btn" onclick="submitAd()">Подать объявление</button>
+	
+  </header>
+
+  <section class="hero">
+    <div class="search-bar">
+ 
+	  <input type="text" id="searchInput" oninput="searchAds()" placeholder="Поиск объявлений..." />
+
+      <button onclick="searchAds()">🔍 Найти</button>
+    </div>
+  </section>
+
+  <section class="section">
+  <h3>Категории</h3>
+  <div class="category-buttons">
+    <a href="#nedvizhimost" class="btn">Недвижимость</a>
+    <a href="#transport" class="btn">Транспорт</a>
+    <a href="#rabota" class="btn">Работа</a>
+    <a href="#uslugi" class="btn">Услуги</a>
+    <a href="#elektronika" class="btn">Электроника</a>
+    <a href="#lichnoe" class="btn">Личное</a>
+  </div>
+</section>
+
+
+   <section class="section" id="primer-category">
+  <h3>Примеры по категориям</h3>
+  <div class="category-grid">
+    
+    <div class="card" onclick="alert('Подробнее о Квартире в аренду')">
+      <img src="Квартира.jpeg" alt="Квартира в аренду">
+      <div class="card-content">
+        <h4>Квартира в аренду</h4>
+        <p>Центр, 2 комнаты</p>
+		<p>1 000 000 сом</p>
+      </div>
+    </div>
+    
+    <div class="card" onclick="alert('Подробнее о Частном доме')">
+      <img src="дом.jpeg" alt="Частный дом">
+      <div class="card-content">
+        <h4>Частный дом</h4>
+        <p>Участок, гараж</p>
+		<p>15 000 000 сом</p>
+      </div>
+    </div>
+    
+    <div class="card" onclick="alert('Подробнее о Skoda Octavia')">
+      <img src="шкода.jpeg" alt="Skoda Octavia">
+      <div class="card-content">
+        <h4>Продажа авто</h4>
+        <p>Skoda Octavia</p>
+		<p>700 000 сом</p>
+      </div>
+    </div>
+    
+    <div class="card" onclick="alert('Подробнее о Yamaha MT')">
+      <img src="ямаха.jpeg" alt="Yamaha MT">
+      <div class="card-content">
+        <h4>Мотоцикл</h4>
+        <p>Yamaha MT</p>
+		<p>560 000 сом</p>
+      </div>
+    </div>
+    
+    <div class="card" onclick="alert('Подробнее о вакансии Продавца')">
+      <img src="продавец.jpeg" alt="Продавец">
+      <div class="card-content">
+        <h4>Продавец</h4>
+        <p>Торговый центр</p>
+		<p>50 000 сом</p>
+      </div>
+    </div>
+    
+    <div class="card" onclick="alert('Подробнее об Офис-менеджере')">
+      <img src="офис.jpeg" alt="Офис-менеджер">
+      <div class="card-content">
+        <h4>Офис-менеджер</h4>
+        <p>Полный день</p>
+		<p>80 000 сом</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+  <section class="section">
+    <h3>Популярные объявления</h3>
+    <p id="noResult" class="hidden" style="color: yellow; font-size: 18px;">Ничего не найдено</p>
+    <div class="category-grid popular-ads">
+	
+      <div class="card"><img src="айфон.jpeg">
+	  <div class="card-content"><h4>iPhone 13</h4>
+	  <p>Новый, гарантия</p>
+	  <p>60 000 сом</p>
+	  </div></div>
+	  
+      <div class="card"><img src="ремонт.jpeg">
+	  <div class="card-content"><h4>Ремонт бытовой техники</h4>
+	  <p>Выезд на дом</p>
+	  <p>Договорная</p>
+	  </div></div>
+    </div>
+  </section>
+  
+  <footer style="background:#111; color:#ccc; padding:40px 20px; text-align:center;">
+    <p>📞 +7 (800) 123-45-67 | ✉️ info@mestnyedela.ru | 📍 г. Москва, ул. Примерная, 123</p>
+    <p style="margin-top:10px;">
+      <a href="https://t.me/abdushukur0v" class="btn" target="_blank">Связаться в Telegram</a>
+      <a href="https://wa.me/70000000000" class="btn" target="_blank">Связаться в WhatsApp</a>
+    </p>
+    <p style="margin-top:10px;">© 2024 МестныеДела. Все права защищены.</p>
+  </footer>
+<script>
+  // Загружаем объявления при загрузке страницы
+  document.addEventListener('DOMContentLoaded', () => {
+    const savedAds = JSON.parse(localStorage.getItem('ads')) || [];
+    savedAds.forEach(ad => {
+      renderAd(ad.title, ad.desc, ad.img);
+    });
+  });
+
+  // Функция добавления объявления
+  function submitAd() {
+    const title = prompt("Введите заголовок объявления:");
+    const desc = prompt("Введите описание:");
+    const img = prompt("Введите ссылку на изображение:");
+
+    if (title && desc && img) {
+      const ad = { title, desc, img };
+      renderAd(ad.title, ad.desc, ad.img);
+      saveAd(ad);
+    }
+  }
+
+  // Отрисовка карточки
+  function renderAd(title, desc, img) {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <img src="${img}" alt="${title}">
+      <div class="card-content">
+        <h4>${title}</h4>
+        <p>${desc}</p>
+      </div>`;
+    document.querySelector('.category-grid').appendChild(card);
+  }
+
+  // Сохранение в localStorage
+  function saveAd(ad) {
+    const ads = JSON.parse(localStorage.getItem('ads')) || [];
+    ads.push(ad);
+    localStorage.setItem('ads', JSON.stringify(ads));
+  }
+
+  // Поиск объявлений
+  function searchAds() {
+    const query = document.getElementById('searchInput').value.toLowerCase();
+    const cards = document.querySelectorAll('.card');
+    let found = false;
+
+    cards.forEach(card => {
+      const title = card.querySelector('h4').innerText.toLowerCase();
+      const desc = card.querySelector('p').innerText.toLowerCase();
+      if (title.includes(query) || desc.includes(query)) {
+        card.classList.remove('hidden');
+        found = true;
+      } else {
+        card.classList.add('hidden');
+      }
+    });
+
+    const noResult = document.getElementById('noResult');
+    if (!found) {
+      noResult.classList.remove('hidden');
+    } else {
+      noResult.classList.add('hidden');
+    }
+  }
+</script>
+
+
+</body>
+</html>
